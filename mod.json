@@ -1,0 +1,65 @@
+{
+	"geode": "5.7.1",
+	"gd": {
+		"win": "2.2081",
+		"mac": "2.2081",
+		"android": "2.2081",
+		"ios": "2.2081"
+	},
+	"id": "dashdunmire.learner",
+	"name": "Learner",
+	"version": "v1.0.0",
+	"developer": "dashdunmire",
+	"description": "Practice levels faster by switching between start positions from in-game.",
+	"settings": {
+        "leftSwitch": {
+            "type": "keybind",
+            "name": "Previous Startpos",
+            "description": "Switches to the previous startpos, wraps around",
+            "default": "Q",
+            "category": "gameplay"
+        },
+        "rightSwitch": {
+            "type": "keybind",
+            "name": "Next Startpos",
+            "description": "Switches to the next startpos, wraps around",
+            "default": "E",
+            "category": "gameplay"
+        },
+		"opacity":{
+			"name": "Opacity",
+			"default": 50,
+			"max": 100,
+			"min": 0,
+			"control": {
+				"slider": true,
+				"slider-step": 1
+			},
+			"type": "float"
+		},
+		"hide":{
+			"name": "Don't fade on start",
+			"description": "Does not make the menu fade from max opacity when you first open a level",
+			"default": false,
+			"type": "bool"
+		},
+		"hideBtns":{
+			"name": "Hide buttons",
+			"description": "Hides the arrow buttons",
+			"default": false,
+			"type": "bool"
+		},
+		"ignoreDisabled": {
+			"name": "Ignore Disabled",
+			"description": "Ignores start positions that have been disabled",
+			"default": false,
+			"type": "bool"
+		}
+	},
+	"tags": [
+		"enhancement",
+		"gameplay",
+		"interface",
+		"utility"
+	]
+}
