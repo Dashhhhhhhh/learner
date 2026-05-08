@@ -1,4 +1,5 @@
 #include "PlayLayer.hpp"
+#include "Geode/binding/FMODAudioEngine.hpp"
 #include "Geode/binding/StartPosObject.hpp"
 #include "UILayer.hpp"
 #include "../ModManager.hpp"
@@ -81,8 +82,26 @@ void HookPlayLayer::setLearnerStartPos(int idx, bool shouldReset) {
 
     resetLevel();
     startMusic();
+    syncLearnerStartPosMusic();
 
     static_cast<HookUILayer*>(m_uiLayer)->updateUI();
+}
+
+void HookPlayLayer::syncLearnerStartPosMusic() {
+    if (!m_startPosObject || !m_startPosObject->m_startSettings) {
+        return;
+    }
+
+    auto settings = m_startPosObject->m_startSettings;
+    auto songTime = timeForPos(
+        m_startPosObject->getPosition(),
+        settings->m_targetOrder,
+        settings->m_targetChannel,
+        true,
+        0
+    ) + settings->m_songOffset;
+    auto songTimeMS = static_cast<unsigned int>(std::max(0.f, songTime) * 1000.f);
+    FMODAudioEngine::get()->setMusicTimeMS(songTimeMS, true, 0);
 }
 
 void HookPlayLayer::createObjectsFromSetupFinished() {
@@ -109,6 +128,7 @@ void HookPlayLayer::resetLevel() {
         applyGuidedStartPos(false);
     }
     PlayLayer::resetLevel();
+    syncLearnerStartPosMusic();
     beginLearnerRun();
 }
 

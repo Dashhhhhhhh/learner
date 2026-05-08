@@ -38,6 +38,7 @@ struct HookPlayLayer : geode::Modify<HookPlayLayer, PlayLayer> {
 
     void updateStartPos(int index);
     void setLearnerStartPos(int index, bool shouldReset);
+    void syncLearnerStartPosMusic();
     void beginLearnerRun();
     void recordLearnerProgress(bool completed = false);
     void recordLearnerSectionClear(int index);
