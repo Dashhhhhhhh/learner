@@ -123,11 +123,16 @@ void HookPlayLayer::createObjectsFromSetupFinished() {
 }
 
 void HookPlayLayer::resetLevel() {
+    auto shouldRestartStartPosMusic = m_hasCompletedLevel || m_fields->m_guidedStartPosPending;
     if (m_fields->m_guidedStartPosPending) {
         m_fields->m_guidedStartPosPending = false;
         applyGuidedStartPos(false);
     }
     PlayLayer::resetLevel();
+    if (shouldRestartStartPosMusic && m_startPosObject) {
+        prepareMusic(false);
+        startMusic();
+    }
     syncLearnerStartPosMusic();
     beginLearnerRun();
 }
