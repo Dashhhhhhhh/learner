@@ -93,13 +93,19 @@ void HookPlayLayer::syncLearnerStartPosMusic() {
     }
 
     auto settings = m_startPosObject->m_startSettings;
+    auto levelSongOffset = m_levelSettings ? m_levelSettings->m_songOffset : 0.f;
+    auto startPosSongOffset = settings->m_songOffset;
+    if (std::abs(startPosSongOffset - levelSongOffset) < 0.001f) {
+        startPosSongOffset = 0.f;
+    }
+
     auto songTime = timeForPos(
         m_startPosObject->getPosition(),
         settings->m_targetOrder,
         settings->m_targetChannel,
         true,
         0
-    ) + settings->m_songOffset;
+    ) + levelSongOffset + startPosSongOffset;
     auto songTimeMS = static_cast<unsigned int>(std::max(0.f, songTime) * 1000.f);
     FMODAudioEngine::get()->setMusicTimeMS(songTimeMS, true, 0);
 }
