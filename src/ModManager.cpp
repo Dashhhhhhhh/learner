@@ -15,6 +15,8 @@ ModManager::ModManager() {
     m_hideBtns = Mod::get()->getSettingValue<bool>("hideBtns");
     m_ignoreDisabled = Mod::get()->getSettingValue<bool>("ignoreDisabled");
     m_guidedMode = Mod::get()->getSavedValue<bool>("guided-mode", false);
+    m_showStartposSwitcher = Mod::get()->getSavedValue<bool>("show-startpos-switcher", true);
+    m_showGuidedPercent = Mod::get()->getSavedValue<bool>("show-guided-percent", true);
     m_guidedLateThreshold = std::clamp(Mod::get()->getSavedValue<int>("guided-late-threshold", 50), 0, 100);
     m_guidedAttemptLimit = std::clamp(Mod::get()->getSavedValue<int>("guided-attempt-limit", 20), 1, 999);
     m_opacity = Mod::get()->getSettingValue<double>("opacity") / 100 * 255;

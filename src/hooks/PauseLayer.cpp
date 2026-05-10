@@ -5,6 +5,7 @@
 #include <Geode/ui/TextInput.hpp>
 
 #include "PlayLayer.hpp"
+#include "UILayer.hpp"
 #include "../ModManager.hpp"
 
 #include <algorithm>
@@ -21,6 +22,8 @@ namespace {
         geode::Ref<CCMenuItemSpriteExtra> m_viewBtn = nullptr;
         geode::Ref<CCMenuItemSpriteExtra> m_clearBtn = nullptr;
         geode::Ref<CCMenuItemSpriteExtra> m_resetGuidedBtn = nullptr;
+        geode::Ref<CCMenuItemSpriteExtra> m_switcherToggleBtn = nullptr;
+        geode::Ref<CCMenuItemSpriteExtra> m_percentToggleBtn = nullptr;
         geode::Ref<CCNode> m_settingsControls = nullptr;
         geode::Ref<TextInput> m_lateThresholdInput = nullptr;
         geode::Ref<TextInput> m_attemptLimitInput = nullptr;
@@ -86,6 +89,19 @@ namespace {
             );
         }
 
+        ButtonSprite* createToggleSprite(bool enabled) {
+            return ButtonSprite::create(
+                enabled ? "ON" : "OFF",
+                54,
+                0,
+                0.42f,
+                true,
+                "goldFont.fnt",
+                enabled ? "GJ_button_01.png" : "GJ_button_04.png",
+                24.f
+            );
+        }
+
         int parseNumber(std::string const& value, int fallback, int minValue, int maxValue) {
             auto digits = std::string();
             for (auto ch : value) {
@@ -109,6 +125,8 @@ namespace {
                 m_settingsControls = nullptr;
                 m_lateThresholdInput = nullptr;
                 m_attemptLimitInput = nullptr;
+                m_switcherToggleBtn = nullptr;
+                m_percentToggleBtn = nullptr;
             }
         }
 
@@ -285,14 +303,48 @@ namespace {
             });
             controls->addChild(m_attemptLimitInput);
 
+            auto toggleMenu = CCMenu::create();
+            toggleMenu->setPosition({0.f, 0.f});
+            controls->addChild(toggleMenu);
+
+            auto switcherLabel = CCLabelBMFont::create("Startpos Switcher", "bigFont.fnt");
+            switcherLabel->setAnchorPoint({1.f, 0.5f});
+            switcherLabel->setScale(0.22f);
+            switcherLabel->limitLabelWidth(132.f, 0.22f, 0.1f);
+            switcherLabel->setPosition({144.f, 76.f});
+            controls->addChild(switcherLabel);
+
+            m_switcherToggleBtn = CCMenuItemSpriteExtra::create(
+                createToggleSprite(mm->m_showStartposSwitcher),
+                this,
+                menu_selector(LearnerStatsPopup::onToggleSwitcher)
+            );
+            m_switcherToggleBtn->setPosition({190.f, 76.f});
+            toggleMenu->addChild(m_switcherToggleBtn);
+
+            auto percentLabel = CCLabelBMFont::create("Top Right %", "bigFont.fnt");
+            percentLabel->setAnchorPoint({1.f, 0.5f});
+            percentLabel->setScale(0.24f);
+            percentLabel->limitLabelWidth(132.f, 0.24f, 0.1f);
+            percentLabel->setPosition({144.f, 51.f});
+            controls->addChild(percentLabel);
+
+            m_percentToggleBtn = CCMenuItemSpriteExtra::create(
+                createToggleSprite(mm->m_showGuidedPercent),
+                this,
+                menu_selector(LearnerStatsPopup::onTogglePercent)
+            );
+            m_percentToggleBtn->setPosition({190.f, 51.f});
+            toggleMenu->addChild(m_percentToggleBtn);
+
             auto mode = CCLabelBMFont::create(
                 ModManager::sharedState()->m_guidedMode ? "Mode: Enabled" : "Mode: Disabled",
                 "bigFont.fnt"
             );
             mode->setAnchorPoint({0.5f, 0.5f});
-            mode->setScale(0.28f);
-            mode->limitLabelWidth(210.f, 0.28f, 0.1f);
-            mode->setPosition({165.f, 75.f});
+            mode->setScale(0.22f);
+            mode->limitLabelWidth(210.f, 0.22f, 0.1f);
+            mode->setPosition({165.f, 28.f});
             controls->addChild(mode);
 
             if (playLayer) {
@@ -304,21 +356,10 @@ namespace {
                     playLayer->getGuidedPhaseStageCount()
                 ).c_str(), "bigFont.fnt");
                 phase->setAnchorPoint({0.5f, 0.5f});
-                phase->setScale(0.24f);
-                phase->limitLabelWidth(240.f, 0.24f, 0.1f);
-                phase->setPosition({165.f, 55.f});
+                phase->setScale(0.19f);
+                phase->limitLabelWidth(240.f, 0.19f, 0.1f);
+                phase->setPosition({165.f, 12.f});
                 controls->addChild(phase);
-
-                auto route = CCLabelBMFont::create(fmt::format(
-                    "Route: {}%-{}%",
-                    playLayer->getLearnerStartPercent(playLayer->m_fields->m_guidedWindowStart),
-                    playLayer->getGuidedRunTargetPercent()
-                ).c_str(), "bigFont.fnt");
-                route->setAnchorPoint({0.5f, 0.5f});
-                route->setScale(0.24f);
-                route->limitLabelWidth(240.f, 0.24f, 0.1f);
-                route->setPosition({165.f, 37.f});
-                controls->addChild(route);
             }
 
             m_settingsControls = controls;
@@ -366,6 +407,34 @@ namespace {
                 m_resetGuidedBtn->setVisible(m_showingSettings);
             }
             refreshCurrentView();
+        }
+
+        void refreshPlayLayerUI() {
+            if (auto playLayer = static_cast<HookPlayLayer*>(PlayLayer::get())) {
+                if (auto uiLayer = static_cast<HookUILayer*>(playLayer->m_uiLayer)) {
+                    uiLayer->updateUI();
+                }
+            }
+        }
+
+        void onToggleSwitcher(CCObject*) {
+            auto mm = ModManager::sharedState();
+            mm->m_showStartposSwitcher = !mm->m_showStartposSwitcher;
+            Mod::get()->setSavedValue("show-startpos-switcher", mm->m_showStartposSwitcher);
+            if (m_switcherToggleBtn) {
+                m_switcherToggleBtn->setSprite(createToggleSprite(mm->m_showStartposSwitcher));
+            }
+            refreshPlayLayerUI();
+        }
+
+        void onTogglePercent(CCObject*) {
+            auto mm = ModManager::sharedState();
+            mm->m_showGuidedPercent = !mm->m_showGuidedPercent;
+            Mod::get()->setSavedValue("show-guided-percent", mm->m_showGuidedPercent);
+            if (m_percentToggleBtn) {
+                m_percentToggleBtn->setSprite(createToggleSprite(mm->m_showGuidedPercent));
+            }
+            refreshPlayLayerUI();
         }
 
         void onResetGuided(CCObject*) {

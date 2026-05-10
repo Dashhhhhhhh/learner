@@ -20,12 +20,12 @@ bool HookUILayer::init(GJBaseGameLayer* baseGame) {
 
 	        fields->m_guidedChanceLabel = CCLabelBMFont::create("0%", "bigFont.fnt");
 	        fields->m_guidedChanceLabel->setID("guided-zero-chance-label"_spr);
-	        fields->m_guidedChanceLabel->setAnchorPoint({0.f, 1.f});
+	        fields->m_guidedChanceLabel->setAnchorPoint({1.f, 1.f});
 	        fields->m_guidedChanceLabel->setScale(0.35f);
 	        fields->m_guidedChanceLabel->setColor({145, 145, 145});
 	        fields->m_guidedChanceLabel->setOpacity(125);
 	        fields->m_guidedChanceLabel->setPosition({
-	            director->getScreenLeft() + 8.f,
+	            director->getScreenRight() - 8.f,
 	            director->getScreenTop() - 8.f
 	        });
 
@@ -94,7 +94,7 @@ void HookUILayer::updateUI() {
 	            fields->m_guidedChanceLabel->setVisible(false);
 	            return;
 	        } else {
-	            fields->m_switcherMenu->setVisible(true);
+	            fields->m_switcherMenu->setVisible(mm->m_showStartposSwitcher);
 	        }
 
     fields->m_switcherLabel->setString(fmt::format("{}/{}", playLayer->m_fields->m_startPosIdx, playLayer->m_fields->m_startPosObjects.size()).c_str());
@@ -118,7 +118,13 @@ void HookUILayer::updateGuidedChanceLabel() {
     auto playLayer = static_cast<HookPlayLayer*>(PlayLayer::get());
     auto fields = m_fields.self();
     auto mm = ModManager::sharedState();
-    if (!playLayer || !fields->m_guidedChanceLabel || playLayer->m_fields->m_startPosObjects.empty() || !mm->m_guidedMode) {
+    if (
+        !playLayer ||
+        !fields->m_guidedChanceLabel ||
+        playLayer->m_fields->m_startPosObjects.empty() ||
+        !mm->m_guidedMode ||
+        !mm->m_showGuidedPercent
+    ) {
         if (fields->m_guidedChanceLabel) {
             fields->m_guidedChanceLabel->setVisible(false);
         }
