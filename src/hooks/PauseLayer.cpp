@@ -429,7 +429,7 @@ class $modify(HookPauseLayer, PauseLayer) {
     void customSetup() {
         PauseLayer::customSetup();
 
-        auto sprite = ButtonSprite::create("Stats", 54, 0, 0.55f, true, "goldFont.fnt", "GJ_button_01.png", 28.f);
+        auto sprite = ButtonSprite::create("Learner", 72, 0, 0.48f, true, "goldFont.fnt", "GJ_button_01.png", 28.f);
         auto button = CCMenuItemSpriteExtra::create(sprite, this, menu_selector(HookPauseLayer::onLearnerStats));
         button->setID("learner-stats-button"_spr);
 
