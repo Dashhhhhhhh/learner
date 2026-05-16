@@ -1,3 +1,8 @@
+# v1.0.2
+
+- Renamed the mod and package to LearnR with updated metadata and repository links.
+- Rebuilt the release package with the new LearnR logo and package name.
+
 # v1.0.1
 
 - Added Geode Index metadata, source links, issue links, and release documentation.
