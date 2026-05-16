@@ -6,9 +6,9 @@
 		"android": "2.2081",
 		"ios": "2.2081"
 	},
-	"id": "learnr",
+	"id": "learnr.learnr",
 	"name": "LearnR",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"developer": "LearnR",
 	"description": "Structured Geometry Dash practice with guided startpos routing and smart state syncing.",
 	"links": {

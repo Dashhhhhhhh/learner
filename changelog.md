@@ -1,3 +1,8 @@
+# v1.0.3
+
+- Updated the package ID to the official Geode index namespace format.
+- Rebuilt the package for index submission as LearnR.
+
 # v1.0.2
 
 - Renamed the mod and package to LearnR with updated metadata and repository links.
